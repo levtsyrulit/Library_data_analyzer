@@ -1,0 +1,107 @@
+{\rtf1\ansi\ansicpg1251\deff0\nouicompat\deflang1049{\fonttbl{\f0\fnil\fcharset0 Times New Roman;}{\f1\fnil\fcharset204 Times New Roman;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\box\brdrdash\brdrw0 \sa200\sl276\slmult1\qc\b\i\f0\fs28\lang1033 Library late return analysis\par
+
+\pard\box\brdrdash\brdrw0 \sa200\sl276\slmult1\i0\fs24 Introduction:\b0\par
+
+\pard\box\brdrdash\brdrw0 \sa200\sl240\slmult1 This analysis was conducted to identify the root causes of the common problem of late book returns and provide actionable solutions and recommendations.\par
+\b First look:\b0\par
+Before delving into the analysis, it is essential to examine the data. The schema reveals four tables, but it is worth noting that the 'books' table may not be relevant to our investigation since it cannot be linked to 'checkouts.' Thus, we will focus on the remaining three tables.\par
+Upon a thorough review of the data, we observed several issues, including missing values, repeated values represented in various forms, such as capitalization and unnecessary spaces. Therefore, data cleaning is crucial before proceeding with the analysis.\par
+\b What is the rate of late returns?\b0\f1\lang1049\par
+
+\pard\box\brdrdash\brdrw0 \sa200\sl276\slmult1 As the next step, we will calculate the number of late book returns by finding the difference between the checkout date and the return date for each checkout. We will use the 'date_checkout' and 'date_returned' columns from the 'checkouts' dataframe to calculate the number of days between the two dates. Any checkout with a return date that exceeds 28 days from the checkout date will be considered as a late return.\par
+Before proceeding with the calculations, we need to clean the data. We will change the format of the 'date_checkout' and 'date_returned' columns from '%Y %m %d' to '%Y-%m-%d' to ensure consistency. Alternatively, we could modify the date format in the 'checkouts.csv' file itself before loading the data into the DataFrame.\par
+If there are any missing values in the 'date_checkout' or 'date_returned' columns, we have two options: we can either drop the rows containing missing values method or fill them with appropriate values. However, since missing checkout dates are not expected in the data, we will drop any rows with empty 'date_checkout' values. We cannot determine the reason behind missing 'date_returned' values, so we will leave them as they are.\par
+Additionally, we noticed that some rows contain invalid data even after dropping the null values. To identify these rows, we will use the 'errors' parameter of the 'to_datetime()' function, setting it to 'coerce'. Any invalid data will be converted to 'NaT' (not a time), and we can then drop the rows with 'NaT' values using the 'dropna()' function.\par
+The rate of late returns is \b 17.18% \b0 based on the data provided. Late returns are defined as books that are not returned within 28 days of checkout.\par
+\b\f0\lang1033 What are the factors of late return?\b0\f1\lang1049\par
+\f0\lang1033 After examining the 'checkouts' table, it became apparent that late returns could be caused either by the libraries or the customers. \par
+\b\fs20 Libraries?\b0\fs24\par
+To further investigate this, we examined the '\i libraries\i0 ' table and found that libraries with the same name were located at different addresses. Therefore, we decided to use the library address for analysis, while disregarding the columns "city", "region", and "postal code" since they do not provide useful information.\par
+After calculating the late return rate by library address, we found that some libraries have a higher late return rate than others. The results are as follows:\par
+205 ne russell st: 26.14%\par
+8226 n denver ave: 23.47%\par
+3605 ne 15th ave: 21.50%\par
+801 sw 10th ave: 18.37%\par
+4040 ne tillamook st: 18.68%\par
+7510 n charleston ave: 18.28%\par
+1038 se cesar e chavez blvd: 17.98%\par
+2300 nw thurman st: 17.89%\par
+512 n killingsworth st: 16.50%\par
+6008 se 49th ave: 15.89%\par
+1525 sw sunset blvd: 15.73%\par
+216 ne knott st: 15.00%\par
+7905 se holgate blvd: 15.38%\par
+522 sw 5th ave: 20.00%\par
+7860 se 13th ave: 14.81%\par
+10723 sw capitol hwy: 14.74%\par
+805 se 122nd ave: 13.04%\par
+7921 ne sandy blvd: 11.34%\par
+\b\fs20 Patrons?\b0\f1\fs24\lang1049\line\f0\lang1033 In order to analyze late returns from the perspective of the customers, we will need to take a look at the '\i customer\i0 ' table. However, we should keep in mind that using the 'name' and 'street_address' columns to make assumptions about customers' proximity to the library would not be reliable without further analysis. Similarly, the 'state' and 'zipcode' columns do not contain useful information for our analysis.\par
+Instead, we can focus on analyzing the late return rate by gender, education, occupation, and city. However, since we don't have information about the date of the data, we cannot make any assumptions about the age of the customers.\par
+\i Late return rate by gender:\i0\f1\lang1049\par
+\f0\lang1033 Male\f1\lang1049 : 18.20%\par
+\f0\lang1033 Female\f1\lang1049 : 16.63%\par
+\i\f0\lang1033 Late return rate by education level:\i0\f1\lang1049\par
+\f0\lang1033 C\f1\lang1049 ollege: 17.96%\par
+\f0\lang1033 O\f1\lang1049 thers: 17.35%\par
+\f0\lang1033 F\f1\lang1049 raduate degree: 17.30%\par
+\f0\lang1033 H\f1\lang1049 igh school: 15.70%\par
+\i\f0\lang1033 Late return rate by ocupation:\i0\f1\lang1049\par
+\f0\lang1033 Admin & Support: 27.93%\par
+Tech: 27.78%\par
+Sales: 27.67%\par
+Blue Collar: 27.48%\par
+Others: 27.42%\par
+Education & Health: 26.56%\par
+Business & Finance: 26.02%\par
+\i Late return rate by city: \i0\par
+Oregon City: 71.43%\par
+West Linn: 66.67%\par
+Tualatin: 60.00%\par
+Damascus: 50.00%\par
+Clackamas: 50.00%\par
+Vancouver: 40.00%\par
+Beaverton: 50.00%\par
+Lake Oswego: 29.63%\par
+Happy Valley: 31.03%\par
+Portland: 14.89%\par
+Gladstone: 0.00%\par
+Gresham: 0.00%\par
+Based on the analysis presented, it can be concluded that there are several factors that may be connected with late returns to the library. Firstly, certain libraries have higher late return rates than others, which suggests that factors such as location, hours of operation, and availability of drop-off options may be influencing late returns.\par
+Additionally, the analysis suggests that there may be some correlation between late returns and certain demographic and occupational factors. For example, males have a higher late return rate than females, and individuals in certain occupational categories (such as admin & support and tech) have higher late return rates than others.\par
+However, it is important to note that the analysis presented is limited by the available data, and further research would be needed to determine the extent and nature of any relationships between late returns and these factors. Additionally, the analysis does not take into account other potential factors that could be influencing late returns, such as the availability of alternative forms of entertainment or changes in library policies or services.\f1\lang1049\par
+\b\f0\lang1033 Recommendations:\b0\f1\lang1049\par
+Based on the analysis presented, there are several potential actions that the library could take to mitigate the risks of late returns:\par
+Develop targeted outreach efforts to the libraries with the highest late return rates: By identifying the libraries with the highest late return rates, the library could develop targeted outreach efforts to these areas to remind patrons of the due dates and offer additional resources or incentives for returning materials on time.\par
+Increase awareness of late return policies and consequences: The library could increase awareness of their late return policies and consequences through signage, email reminders, or other communication channels. By reminding patrons of the consequences of late returns (such as fines or loss of borrowing privileges), they may be more motivated to return materials on time.\par
+Offer alternative return options: The library could consider offering additional return options, such as drop boxes or extended hours, to make it more convenient for patrons to return materials on time.\par
+Conduct further research to understand the underlying factors contributing to late returns: While the analysis presented provides some insight into potential factors contributing to late returns, further research would be needed to fully understand the nature of these relationships and identify additional strategies to mitigate the risks of late returns.\par
+Overall, a combination of these strategies may help to mitigate the risks of late returns and ensure that library materials are available for all patrons to enjoy.\par
+
+\pard\sa200\sl276\slmult1\b\f0\lang9 How would you present the findings to get buy-in?\b0\par
+1. Executive summary: A brief summary of our analysis, including the key findings and recommendations.\par
+2. Methodology: A description of the methods we used to analyze the data, including any assumptions or limitations.\par
+3. Results: A detailed description of our findings, including visualizations and statistical analysis.\par
+4. Recommendations: A set of actionable recommendations based on our analysis, along with a justification for each recommendation.\par
+5. Conclusion: A summary of our analysis and recommendations, along with a call to action for the library to implement our recommendations.\par
+We can also tailor the presentation to the specific needs and preferences of the library, such as emphasizing certain findings or visualizations that are most relevant to their situation, or highlighting the potential benefits and costs of implementing our \par
+We would present our findings in a clear and concise report that includes visualizations of the data to help communicate the results effectively. We would highlight the key takeaways and recommendations to the library and provide context to help them understand the findings. Additionally, we would be available to answer any questions and provide further details as needed.\par
+\b Bonus:\b0\par
+In addition to the main analysis and recommendations, we can also explore other stories that can be told with the data. Here are a few ideas:\par
+Popular books and categories: We can identify the most popular books and book categories among library patrons, and use this information to inform purchasing decisions and marketing campaigns.\par
+Patron demographics: We can analyze the demographics of library patrons (such as age, gender, and education) to identify trends and patterns, and use this information to tailor services and programs to specific groups of patrons.\par
+Regional differences: We can compare the checkout and return patterns across different libraries and regions, and identify any differences or similarities that may be relevant to the library's operations and strategies.\par
+Long-term trends: We can analyze the data over a longer period of time (such as multiple years) to identify any long-term trends or patterns, and use this information to plan for the future.\par
+As for creating a predictive model, we could explore building a model that predicts the likelihood of a checkout being returned late based on various factors such as the patron's age, the book's category, and the library's location. However, this would require additional data (such as historical checkout and return data from previous years), and would need to be carefully validated and tested to ensure its accuracy and reliability.\par
+Fun fact: Did you know that individuals who share the same names as members of The Royal Family do not exhibit any significant differences in book return timeframes?\par
+{{\field{\*\fldinst{HYPERLINK https://www.convertcsv.com/csv-viewer-editor.htm }}{\fldrslt{https://www.convertcsv.com/csv-viewer-editor.htm\ul0\cf0}}}}\f0\fs24\par
+{{\field{\*\fldinst{HYPERLINK https://www.tableau.com/learn/articles/what-is-data-cleaning#how-to-clean-data }}{\fldrslt{https://www.tableau.com/learn/articles/what-is-data-cleaning#how-to-clean-data\ul0\cf0}}}}\f0\fs24\par
+{{\field{\*\fldinst{HYPERLINK https://translate.google.com/ }}{\fldrslt{https://translate.google.com/\ul0\cf0}}}}\f0\fs24\par
+\par
+\par
+\par
+}
+ 
